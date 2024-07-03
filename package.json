@@ -1,0 +1,35 @@
+{
+  "name": "weblate-manage",
+  "version": "1.0.1",
+  "description": "",
+  "main": "src/index.js",
+  "bin": {
+    "weblate": "bin/index.js"
+  },
+  "files": [
+    "bin",
+    "src"
+  ],
+  "scripts": {
+    "publish": "npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/js-spider/weblate-manager.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [],
+  "author": "pangchao <pangchao@zetyun.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "11.1.0",
+    "fs-extra": "8.1.0",
+    "prettier": "^2.8.8",
+    "simple-git": "2.48.0"
+  },
+  "devDependencies": {}
+}
