@@ -12,7 +12,7 @@ const tempDir = path.resolve(__dirname,'./temp_dir') // 通过git clone 拉取�
 let sourceDir, gitRemote, wordDir, gitBranch,increment
 
 
-function onPush(){
+function onFetch(){
     readConfig().then(()=>{
         console.log(chalk.cyan('提取词条中...'));
          git.clone(gitRemote,tempDir).then(()=>{
@@ -143,5 +143,5 @@ function writeJson(data, wordDirPath){
 
 
 module.exports = {
-  onPush
+    onFetch
 }

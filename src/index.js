@@ -13,9 +13,9 @@ program
   .action(actions.onPull);
 
 program
-  .command('push')
+  .command('fetch')
   .description('')
-  .action(actions.onPush);
+  .action(actions.onFetch);
 
 
 program
