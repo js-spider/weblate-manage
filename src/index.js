@@ -14,7 +14,8 @@ program
 
 program
   .command('fetch')
-  .description('')
+  .description('lang :语言名称 默认: zh_CN')
+  .argument('[lang]','语言名称 默认: zh_CN')
   .action(actions.onFetch);
 
 

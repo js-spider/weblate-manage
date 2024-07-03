@@ -11,7 +11,7 @@ const configPath = path.resolve(cwd,'./.weblate.json')
 const tempDir = path.resolve(__dirname,'./temp_dir') // 通过git clone 拉取最新的多语言文件并存储到 temp_dir 中
 const cacheDir = path.resolve(__dirname,'./cache_dir') // 拷贝项目中lang目录作为基础，在此目录中替换语言文件 最后覆盖项目中的lang目录
 
-let sourceDir, gitRemote, allData, langMap, diffMapping // 同步开始前 会通过readConfig() 从weblate.json 中读取数据并为这些属性赋值
+let sourceDir, gitRemote, datas, langMap, diffMapping // 同步开始前 会通过readConfig() 从weblate.json 中读取数据并为这些属性赋值
 
 
 function onPull(){
@@ -71,9 +71,9 @@ function readConfig(){
       gitRemote = remote
       diffMapping = diff
       langMap = lang
-      allData = []
+      datas = {}
       Object.values(lang).forEach(item =>{
-        allData[item] = []
+        datas[item] = []
       })
       resolve(config)
     }catch(e){
@@ -94,11 +94,11 @@ function cacheOldDir(){
 }
 
 function getAllData(){
-  Object.keys(allData).forEach(lang =>{
+  Object.keys(datas).forEach(lang =>{
     const formatLang = diffMapping[lang] || lang
-    allData[lang] = fs.readJsonSync(path.resolve(tempDir, `${formatLang}.json`))
+    datas[lang] = fs.readJsonSync(path.resolve(tempDir, `${formatLang}.json`))
   })
-  return allData
+  return datas
 }
 
 

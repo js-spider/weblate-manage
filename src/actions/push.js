@@ -9,20 +9,26 @@ const git = simpleGit({baseDir:cwd});
 const configPath = path.resolve(cwd,'./.weblate.json')
 const tempDir = path.resolve(__dirname,'./temp_dir') // 通过git clone 拉取最新的多语言文件并存储到 temp_dir 中
 
-let sourceDir, gitRemote, wordDir, gitBranch,increment
+let sourceDir, gitRemote, wordDir, dataArr,diffMapping, gitBranch,increment, defaultLang
 
 
-function onFetch(){
+function onFetch(langName){
     readConfig().then(()=>{
-        console.log(chalk.cyan('提取词条中...'));
-         git.clone(gitRemote,tempDir).then(()=>{
-            const wordDirPath = path.resolve(wordDir,gitBranch)
-            const oldWords = getOldWords()
-            const newWords = getNewWords(oldWords, wordDirPath)
-            writeJson(newWords, wordDirPath)
-         }).finally(()=>{
-            fs.removeSync(tempDir)
-         })
+        langName = (langName && langName.trim()) || 'zh_CN'
+        if(dataArr.includes(langName)){
+            defaultLang = langName
+            console.log(chalk.cyan('提取词条中...'));
+            git.clone(gitRemote,tempDir).then(()=>{
+                const wordDirPath = path.resolve(wordDir,gitBranch)
+                const oldWords = getOldWords()
+                const newWords = getNewWords(oldWords, wordDirPath)
+                writeJson(newWords, wordDirPath)
+            }).finally(()=>{
+                fs.removeSync(tempDir)
+            })
+        }else{
+            console.log(chalk.red(`语言名称格式不正确 参考: zh_CN`));
+        }
     })
 }
 
@@ -46,6 +52,8 @@ function readConfig(){
         gitRemote = config.remote
         wordDir = path.resolve(cwd,config.wordDir)
         increment = false
+        dataArr = Object.values(config.lang)
+        diffMapping = config.diff
         getCurrentGitBranch((current)=>{
             gitBranch = current
             resolve()
@@ -59,10 +67,10 @@ function readConfig(){
 
 function getOldWords(){
     try{
-        const jsonData = fs.readJsonSync(path.resolve(tempDir, `zh_CN.json`))
+        const jsonData = fs.readJsonSync(path.resolve(tempDir, `${diffMapping[defaultLang] || defaultLang}.json`))
         return jsonData
     }catch(e){
-        console.log(chalk.red('读取zh_CN.json文件失败'));
+        console.log(chalk.red(`读取${defaultLang}文件失败`));
     }
 }
 
@@ -71,7 +79,7 @@ function getNewWords(oldWords, wordDirPath){
         const newWords = {}
         const allFilePaths = getAllFilePaths()
         allFilePaths.forEach(folder =>{
-            const jsonData = fs.readJSONSync(path.resolve(folder,'zh_CN.json'))
+            const jsonData = fs.readJSONSync(path.resolve(folder,`${defaultLang}.json`))
             if(jsonData){
                Object.values(jsonData).forEach(item =>{
                 if(typeof item === 'object'){
