@@ -58,7 +58,7 @@ function readConfig(){
             gitBranch = current
             resolve()
         })
-        
+
       }catch(e){
         reject(e)
       }
@@ -92,24 +92,26 @@ function getNewWords(oldWords, wordDirPath){
                })
             }
         })
-        fs.ensureDirSync(wordDirPath)
-        const history = getWordHistory(wordDirPath)
-        if(Array.isArray(history) && history.length){
+        if(Object.keys(newWords).length){
+          fs.ensureDirSync(wordDirPath)
+          const history = getWordHistory(wordDirPath)
+          if(Array.isArray(history) && history.length){
             increment = true
             history.forEach(file =>{
-                const jsonData = fs.readJSONSync(path.resolve(wordDirPath,file))
-                Object.keys(newWords).forEach(key =>{
-                    if(jsonData[key] && jsonData[key] === newWords[key]){
-                        delete newWords[key]
-                    } 
-                })
+              const jsonData = fs.readJSONSync(path.resolve(wordDirPath,file))
+              Object.keys(newWords).forEach(key =>{
+                if(jsonData[key] && jsonData[key] === newWords[key]){
+                  delete newWords[key]
+                }
+              })
             })
+          }
         }
         return newWords
     }catch(e){
         console.log(chalk.red('获取新词条失败'), e);
     }
-}    
+}
 
 function getAllFilePaths(){
     const allFilePaths = []
@@ -145,7 +147,7 @@ function writeJson(data, wordDirPath){
         }
     }else{
         console.log(chalk.bgCyanBright('无新增词条'));
-    }    
+    }
 }
 
 
